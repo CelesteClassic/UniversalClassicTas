@@ -18,6 +18,8 @@ To step forward in time press L, which will advance the game one frame, and the 
 
 To step backwards in time press K, which will step 1 frame backwards, and you can change what was pressed before.
 
+To change the number of dashes you have press 0,1,2,3 or -, pressing a number will set your number of dashes, and pressing - will activate default mode (1 dash before 2300, and 2 dashes after).
+
 To see the TAS in real time press P, which will start reproducing the inputs from the frame you are currently on. (Note: you shouldn't input anything while the TAS is reproducing)
 
 To go back to the first frame press D, which will restart the game but still keep your inputs.
@@ -38,6 +40,5 @@ To reproduce a full game TAS, create a folder named 'TAS' inside the love2d fold
 
 You can press F1 or F6 to save a screenshot, F3 or F8 to start a recording and F4 or F9 to save the recording, both saved to the love2d folder, and the console output will show what that directory is.
 
-# TAS times
-- Any%: 1:38.03
-- 100%: 1:59.80
+# TAS Database 
+https://celesteclassic.github.io/tasdatabase/
