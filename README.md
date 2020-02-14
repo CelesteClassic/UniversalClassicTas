@@ -1,11 +1,8 @@
-# Installation
-If you are using Windows or Mac, download the corresponding zip, then unzip it.
-
-If you are on Windows, you will extract an executable and some .dll files into a folder, then you can run the executable.
-
-If you are on Mac, you will find a .app file inside the zip which you can execute.
-
-If you are on Linux, download CelesteTAS.love and install the [official LÖVE packages](https://www.love2d.org), which will then let you run the .love file.
+# Instructions to run 
+download LOVE from https://www.love2d.org/
+from the parent directory of the project, run 
+``` <path to your love executable> CelesteTAS <cartname>.p8``` 
+where cartname is the name of the cart you want to TAS which should be in the carts folder
 
 # Usage
 First of all, you will see a timer in the top-left corner, which tracks the time, and a black rectangle right next to it, the black rectangle is an input viewer, where you can see what keys are being pressed on that frame. The input viewer will be blacked out because you can't input anything yet, as you are in the spawning state, once the spawning state is over (around 26 frames after loading the level, depends on the level) you will be able to see the keys.
@@ -40,5 +37,16 @@ To reproduce a full game TAS, create a folder named 'TAS' inside the love2d fold
 
 You can press F1 or F6 to save a screenshot, F3 or F8 to start a recording and F4 or F9 to save the recording, both saved to the love2d folder, and the console output will show what that directory is.
 
+# Mod Compatability list
+| Mod | Compatibility |
+| ------ | ------ |
+| Celeste | fully supported |
+| Everred | fully supported |
+| Noeleste | fully supported |
+| Caligo |fully supported |
+| Old Site | supported, custom cart needed |
+| Perisher | supported, custom cart needed |
+| Funklost | not supported, scrolling levels don't work |
+| Adelie | not supported, crashes on launch |
 # TAS Database 
 https://celesteclassic.github.io/tasdatabase/
