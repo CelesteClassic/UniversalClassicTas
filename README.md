@@ -43,6 +43,7 @@ You can press F1 or F6 to save a screenshot, F3 or F8 to start a recording and F
 | Celeste | fully supported |
 | Everred | fully supported |
 | Caligo |fully supported |
+| Arielle | supported, custom cart needed |
 | Noeleste | supported, custom cart needed |
 | Old Site | supported, custom cart needed |
 | Perisher | supported, custom cart needed |
