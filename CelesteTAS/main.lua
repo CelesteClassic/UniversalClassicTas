@@ -178,7 +178,6 @@ function love.load(argv)
 	mobile=(love.system.getOS()=="Android" or love.system.getOS()=="iOS")
 
 	love.resize(love.graphics.getDimensions()) -- Setup initial scaling and padding
-
 	osc={}
 	-- tri
 	osc[0]=function(x)
@@ -349,6 +348,7 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 	gif=require("gif")
 
 	-- load the cart
+	love.filesystem.createDirectory("carts")
 	_load(love_args[1]~=nil and 'carts/'..love_args[1] or 'carts/celeste.p8')
 end
 
@@ -626,7 +626,7 @@ function update_audio(buffer)
 						ch.freq=note_to_hz(note)
 					end
 					-- not a good fix
-					if pcall(ch.osc~=nil) then 
+					if ch.osc~=nil then 
 						ch.sample=ch.osc(ch.oscpos)*vol/7
 					else 
 						ch.sample=0
