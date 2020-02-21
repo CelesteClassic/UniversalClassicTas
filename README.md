@@ -1,11 +1,8 @@
-# Installation
-If you are using Windows or Mac, download the corresponding zip, then unzip it.
-
-If you are on Windows, you will extract an executable and some .dll files into a folder, then you can run the executable.
-
-If you are on Mac, you will find a .app file inside the zip which you can execute.
-
-If you are on Linux, download CelesteTAS.love and install the [official LÖVE packages](https://www.love2d.org), which will then let you run the .love file.
+# Instructions to run 
+download LOVE from https://www.love2d.org/
+from the parent directory of the project, run 
+``` <path to your love executable> CelesteTAS <cartname>.p8``` 
+where cartname is the name of the cart you want to TAS which should be in the carts folder
 
 # Usage
 First of all, you will see a timer in the top-left corner, which tracks the time, and a black rectangle right next to it, the black rectangle is an input viewer, where you can see what keys are being pressed on that frame. The input viewer will be blacked out because you can't input anything yet, as you are in the spawning state, once the spawning state is over (around 26 frames after loading the level, depends on the level) you will be able to see the keys.
@@ -17,6 +14,8 @@ To go to the next level press F and to go to the previous level press S, note th
 To step forward in time press L, which will advance the game one frame, and the keys that were inputted for that frame will be executed.
 
 To step backwards in time press K, which will step 1 frame backwards, and you can change what was pressed before.
+
+To change the number of dashes you have press 0,1,2,3 or -, pressing a number will set your number of dashes, and pressing - will activate default mode (1 dash before 2300, and 2 dashes after).
 
 To see the TAS in real time press P, which will start reproducing the inputs from the frame you are currently on. (Note: you shouldn't input anything while the TAS is reproducing)
 
@@ -38,6 +37,16 @@ To reproduce a full game TAS, create a folder named 'TAS' inside the love2d fold
 
 You can press F1 or F6 to save a screenshot, F3 or F8 to start a recording and F4 or F9 to save the recording, both saved to the love2d folder, and the console output will show what that directory is.
 
-# TAS times
-- Any%: 1:38.03
-- 100%: 1:59.80
+# Mod Compatability list
+| Mod | Compatibility |
+| ------ | ------ |
+| Celeste | fully supported |
+| Everred | fully supported |
+| Caligo |fully supported |
+| Noeleste | supported, custom cart needed |
+| Old Site | supported, custom cart needed |
+| Perisher | supported, custom cart needed |
+| Funklost | not supported, scrolling levels don't work |
+| Adelie | not supported, crashes on launch |
+# TAS Database 
+https://celesteclassic.github.io/tasdatabase/
