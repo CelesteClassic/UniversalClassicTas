@@ -1149,7 +1149,6 @@ function _update()
 	-- screenshake
 	if shake>0 then
 		shake-=1
-		camera""
 		if shake>0 then
 			camera(-2+rnd(5),-2+rnd(5))
 		end
