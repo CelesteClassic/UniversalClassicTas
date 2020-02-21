@@ -277,8 +277,8 @@ local function update()
 			else
 				TAS.load_file(love.filesystem.newFile("TAS/TAS"..tostring(pico8.cart.level_index()+1)..".tas"))
 				TAS.reproduce=true
+				log(tostring(pico8.cart.minutes<10 and "0"..pico8.cart.minutes or pico8.cart.minutes)..":"..tostring(pico8.cart.seconds<10 and "0"..pico8.cart.seconds or pico8.cart.seconds)..tostring(pico8.cart.frames/30):sub(2))
 				if pico8.cart.level_index()==30 then
-					log(tostring(pico8.cart.minutes<10 and "0"..pico8.cart.minutes or pico8.cart.minutes)..":"..tostring(pico8.cart.seconds<10 and "0"..pico8.cart.seconds or pico8.cart.seconds)..tostring(pico8.cart.frames/30):sub(2))
 					TAS.final_reproduce=false
 					TAS.showdebug=true
 					--pico8.cart.draw_time=draw_time
@@ -742,6 +742,7 @@ local function init()
 		end
 	end
 	pico8.cart.begin_game()
+	load_level(pico8.cart.room.x,pico8.cart.room.y,true)
 end
 TAS.init=init
 local function restart()
