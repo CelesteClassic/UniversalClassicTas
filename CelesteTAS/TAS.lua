@@ -343,6 +343,20 @@ local function draw()
 	end
 
 	if TAS.showdebug and pico8.cart.level_index()<30 and not TAS.final_reproduce then
+		--[[pico8.cart.rectfill(pico8.camera_x+1,pico8.camera_y+1,pico8.camera_x+13,pico8.camera_y+7,0)
+		pico8.cart.print(tostring(TAS.practice_time),pico8.camera_x+2,pico8.camera_y+2,7)
+		
+		local inputs_x=15
+		pico8.cart.rectfill(pico8.camera_x+inputs_x,pico8.camera_y+1,pico8.camera_x+inputs_x+24,pico8.camera_y+11,0)
+		if TAS.show_keys then
+			pico8.cart.rectfill(pico8.camera_x+inputs_x + 12, pico8.camera_y+7, pico8.camera_x+inputs_x + 14, pico8.camera_y+9, TAS.keypresses[TAS.keypress_frame][0] and 7 or 1) -- l
+			pico8.cart.rectfill(pico8.camera_x+inputs_x + 20, pico8.camera_y+7, pico8.camera_x+inputs_x + 22, pico8.camera_y+9, TAS.keypresses[TAS.keypress_frame][1] and 7 or 1) -- r
+			pico8.cart.rectfill(pico8.camera_x+inputs_x + 16, pico8.camera_y+3, pico8.camera_x+inputs_x + 18, pico8.camera_y+5, TAS.keypresses[TAS.keypress_frame][2] and 7 or 1) -- u
+			pico8.cart.rectfill(pico8.camera_x+inputs_x + 16, pico8.camera_y+7, pico8.camera_x+inputs_x + 18, pico8.camera_y+9, TAS.keypresses[TAS.keypress_frame][3] and 7 or 1) -- d
+			pico8.cart.rectfill(pico8.camera_x+inputs_x + 2, pico8.camera_y+7, pico8.camera_x+inputs_x + 4, pico8.camera_y+9, TAS.keypresses[TAS.keypress_frame][4] and 7 or 1) -- z
+			pico8.cart.rectfill(pico8.camera_x+inputs_x + 6, pico8.camera_y+7, pico8.camera_x+inputs_x + 8, pico8.camera_y+9, TAS.keypresses[TAS.keypress_frame][5] and 7 or 1) -- x
+		end]]--
+		pico8.cart.camera(0,0)
 		pico8.cart.rectfill(1,1,13,7,0)
 		pico8.cart.print(tostring(TAS.practice_time),2,2,7)
 		
@@ -560,13 +574,15 @@ local function keypress(key)
 			if not pico8.cart.pause_player then
 				ready_level()
 				if pico8.cart.level_index()<29 then
+					local newx=pico8.cart.room.x
+					local newy=pico8.cart.room.y
 					if pico8.cart.room.x==7 then
-						pico8.cart.room.x=0
-						pico8.cart.room.y=pico8.cart.room.y+1
+						newx=0
+						newy=pico8.cart.room.y+1
 					else
-						pico8.cart.room.x=pico8.cart.room.x+1
+						newx=pico8.cart.room.x+1
 					end
-					load_level(pico8.cart.room.x, pico8.cart.room.y, true)
+					load_level(newx, newy, true)
 					if pico8.cart.level_index()>21 then
 						pico8.cart.max_djump=TAS.djump==-1 and 2 or TAS.djump
 						pico8.cart.new_bg=true
@@ -582,13 +598,15 @@ local function keypress(key)
 			if not pico8.cart.pause_player then
 				ready_level()
 				if pico8.cart.level_index()>0 then
+					local newx=pico8.cart.room.x
+					local newy=pico8.cart.room.y
 					if pico8.cart.room.x==0 then
-						pico8.cart.room.x=7
-						pico8.cart.room.y=pico8.cart.room.y-1
+						newx=7
+						newy=pico8.cart.room.y-1
 					else
-						pico8.cart.room.x=pico8.cart.room.x-1
+						newx=pico8.cart.room.x-1
 					end
-					load_level(pico8.cart.room.x, pico8.cart.room.y, true)
+					load_level(newx, newy, true)
 					if pico8.cart.level_index()<=21 then
 						pico8.cart.max_djump=TAS.djump==-1 and 1 or TAS.djump
 						pico8.cart.new_bg=nil
