@@ -594,8 +594,8 @@ green_bubble = {  --by amegpo
         this.x=this.base_x
         this.y=this.base_y
         if this.shake>0 then
-          this.x=this.base_x+rnd(2)-1
-          this.y=this.base_y+rnd(2)-1
+          --this.x=this.base_x+rnd(2)-1
+          --this.y=this.base_y+rnd(2)-1
           this.shake-=1
         end
         hit.x=(this.x+hit.x)/2
