@@ -502,7 +502,7 @@ function api.sset(x, y, c)
 	c=flr(c or 0)%16
 	if x>=0 and x<128 and y>=0 and y<128 then
 		pico8.spritesheet_data:setPixel(x, y, c/15, 0, 0, 1)
-		pico8.spritesheet:refresh()
+		pico8.spritesheet:replacePixels(pico8.spritesheet_data)
 	end
 end
 
