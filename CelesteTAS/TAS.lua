@@ -751,6 +751,24 @@ local function init()
 			balloon_init(this)
 			this.initial_offset=this.offset 
 		end
+	
+	end
+	
+	if pico8.cart.chest~=nil then
+		local chest_init=pico8.cart.chest.init 
+		pico8.cart.chest.init=function(this)
+			chest_init(this)
+			this.offset=0
+		end 
+		local chest_update=pico8.cart.chest.update 
+		pico8.cart.chest.update=function(this)
+			local _rnd=pico8.cart.rnd
+			if(this.timer-1<=0) then 
+				pico8.cart.rnd=function() return this.offset+1 end
+			end 
+			chest_update(this)
+			pico8.cart.rnd=_rnd
+		end
 	end
 	local _draw=pico8.cart._draw
 	pico8.cart._draw=function() 
