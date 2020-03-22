@@ -48,6 +48,7 @@ You can press F1 or F6 to save a screenshot, F3 or F8 to start a recording and F
 | Old Site | supported, custom cart needed |
 | Perisher | supported, custom cart needed |
 | Funklost | supported, custom cart needed |
+| Terra Australis | supported, custom cart needed |
 | Adelie | not supported, crashes on launch |
 # TAS Database 
 https://celesteclassic.github.io/tasdatabase/
