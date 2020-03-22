@@ -262,7 +262,8 @@ local function update()
 			TAS.keypress_frame=TAS.keypress_frame+1
 		end
 		
-		if TAS.prev_state.room.x>=0 and TAS.prev_state.room.x~=pico8.cart.room.x then
+		if TAS.prev_state.room.x>=0 and 
+		(TAS.prev_state.room.x~=pico8.cart.room.x or TAS.prev_state.room.y~= pico8.cart.room.y) then
 			if not TAS.final_reproduce then
 				if pico8.cart.level_index()<=21 then
 					pico8.cart.max_djump=TAS.djump==-1 and 1 or TAS.djump
