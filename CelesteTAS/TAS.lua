@@ -237,7 +237,7 @@ local function update()
 	end
 	if TAS.advance_frame then
 		TAS.advance_frame=false
-		
+		local prev_frames
 		
 		pico8.cart.update=true
 		TAS.cart_update=true
@@ -246,6 +246,7 @@ local function update()
 			TAS.start=true
 			TAS.current_frame=0
 			TAS.practice_time=0
+			prev_frames=TAS.keypress_frame-2
 			TAS.keypress_frame=1
 		elseif not seen_player_spawn then
 			TAS.start=false 
@@ -275,12 +276,14 @@ local function update()
 				load_level(TAS.prev_state.room.x, TAS.prev_state.room.y, false)
 				set_seeds()
 			else
+				local numFrames=TAS.current_frame
 				TAS.load_file(love.filesystem.newFile("TAS/TAS"..tostring(pico8.cart.level_index()+1)..".tas"))
 				TAS.reproduce=true
-				log(tostring(pico8.cart.minutes<10 and "0"..pico8.cart.minutes or pico8.cart.minutes)..":"..tostring(pico8.cart.seconds<10 and "0"..pico8.cart.seconds or pico8.cart.seconds)..tostring(pico8.cart.frames/30):sub(2))
+				log(tostring(pico8.cart.minutes<10 and "0"..pico8.cart.minutes or pico8.cart.minutes)..":"..tostring(pico8.cart.seconds<10 and "0"..pico8.cart.seconds or pico8.cart.seconds)..tostring(pico8.cart.frames/30):sub(2).." ("..prev_frames..")")
 				if pico8.cart.level_index()==30 then
-					TAS.final_reproduce=false
-					TAS.showdebug=true
+					--TAS.final_reproduce=false
+					--TAS.showdebug=true
+					
 					--pico8.cart.draw_time=draw_time
 					--pico8.cart.centiseconds=math.floor(100*pico8.cart.frames/30)
 				end
@@ -342,7 +345,7 @@ local function draw()
 		end
 	end
 
-	if TAS.showdebug and pico8.cart.level_index()<30 and not TAS.final_reproduce then
+	if TAS.showdebug and pico8.cart.level_index()<=30 and not TAS.final_reproduce then
 		--[[pico8.cart.rectfill(pico8.camera_x+1,pico8.camera_y+1,pico8.camera_x+13,pico8.camera_y+7,0)
 		pico8.cart.print(tostring(TAS.practice_time),pico8.camera_x+2,pico8.camera_y+2,7)
 		
@@ -478,33 +481,34 @@ end
 local function load_file(file)
 	TAS.keypresses={}
 	local data=file:read()
-	local iterator=2
-	local h=0
-	for x in data:gmatch("([^]]+)") do
-		if h==0 then
-			local i=0
-			for s in x:sub(2):gmatch("([^,]+)") do
-				TAS.balloon_seeds[i]=tostring(s)
-				i=i+1
-			end
-			h=1
-		else
-			for s in x:gmatch("([^,]+)") do
-				TAS.keypresses[iterator]={}
-				for i=0,5 do
-					TAS.keypresses[iterator][i]=false
+	if data~=nil then
+		local iterator=2
+		local h=0
+		for x in data:gmatch("([^]]+)") do
+			if h==0 then
+				local i=0
+				for s in x:sub(2):gmatch("([^,]+)") do
+					TAS.balloon_seeds[i]=tostring(s)
+					i=i+1
 				end
-				local c=tonumber(s)
-				for i=0,5 do
-					if math.floor(c/math.pow(2,i))%2==1 then
-						TAS.keypresses[iterator][i]=true
+				h=1
+			else
+				for s in x:gmatch("([^,]+)") do
+					TAS.keypresses[iterator]={}
+					for i=0,5 do
+						TAS.keypresses[iterator][i]=false
 					end
+					local c=tonumber(s)
+					for i=0,5 do
+						if math.floor(c/math.pow(2,i))%2==1 then
+							TAS.keypresses[iterator][i]=true
+						end
+					end
+					iterator=iterator+1
 				end
-				iterator=iterator+1
 			end
 		end
 	end
-	
 	TAS.reproduce=false
 	TAS.practice_timing=false
 	pico8.cart.got_fruit[1+pico8.cart.level_index()]=false
@@ -573,7 +577,7 @@ local function keypress(key)
 		if not TAS.final_reproduce then
 			if not pico8.cart.pause_player then
 				ready_level()
-				if pico8.cart.level_index()<29 then
+				if pico8.cart.level_index()<30 then
 					local newx=pico8.cart.room.x
 					local newy=pico8.cart.room.y
 					if pico8.cart.room.x==7 then
