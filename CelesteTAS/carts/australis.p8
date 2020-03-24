@@ -1496,12 +1496,16 @@ function draw_object(obj)
 end
 
 function draw_time(x,y)
+  camera()
   rectfill(x,y,x+44,y+6,0)
   print(two_digit_str(flr(minutes/60))..":".. -- hours
     two_digit_str(minutes%60)..":".. -- minutes
     two_digit_str(flr(seconds_f/30))..".".. -- seconds
     two_digit_str(flr(100*(seconds_f%30)/30)), -- centiseconds
     x+1,y+1,7)
+  local camx=round(cam_x)-64
+  local camy=round(cam_y)-64
+  camera(camx,camy)
 end
 
 function two_digit_str(x)
