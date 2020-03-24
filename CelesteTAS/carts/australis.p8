@@ -53,6 +53,7 @@ function begin_game()
   deaths=0
   frames=0
   seconds_f=0
+  seconds=0
   minutes=0
   music_timer=0
   start_game=false
@@ -1279,8 +1280,8 @@ function load_room(id,y)
   foreach(objects,destroy_object)
   -- current room
   lvl_id=y==nil and id or id%8+y*8
-  room.x=y==nil and rx() or id
-  room.y=y==nil and ry() or y
+  room.x=y==nil and id%8 or id
+  room.y=y==nil and flr(id/8) or y
   -- entities
   for tx=0,16*rw()-1 do
     for ty=0,16*rh()-1 do
@@ -1303,6 +1304,7 @@ function _update()
   frames=(frames+1)%30
   if not is_title() and lvl_id<15 then
     seconds_f=(seconds_f+1)%1800
+	seconds=flr(seconds_f/30)
     if seconds_f==0 then
       minutes+=1
     end
