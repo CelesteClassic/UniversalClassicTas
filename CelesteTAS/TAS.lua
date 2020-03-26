@@ -237,7 +237,7 @@ local function update()
 	end
 	if TAS.advance_frame then
 		TAS.advance_frame=false
-		local prev_frames
+		local prev_frames=TAS.keypress_frame-2
 		
 		pico8.cart.update=true
 		TAS.cart_update=true
@@ -246,7 +246,6 @@ local function update()
 			TAS.start=true
 			TAS.current_frame=0
 			TAS.practice_time=0
-			prev_frames=TAS.keypress_frame-2
 			TAS.keypress_frame=1
 		elseif not seen_player_spawn then
 			TAS.start=false 
