@@ -442,8 +442,8 @@ function set_seeds()
 		elseif o.type==pico8.cart.chest then
 			o.offset=TAS.balloon_seeds[iterator2]
 			iterator2=iterator2+1
-		elseif o.type==pico8.cart.platform then
-			o.rem.x=o.dir*0.65
+		--[[elseif o.type==pico8.cart.platform then
+			o.rem.x=o.dir*0.65]]--
 		end
 	end
 end
@@ -512,7 +512,9 @@ local function load_file(file)
 	TAS.reproduce=false
 	TAS.practice_timing=false
 	pico8.cart.got_fruit[1+pico8.cart.level_index()]=false
-	pico8.cart.load_room(pico8.cart.room.x,pico8.cart.room.y)
+	if not TAS.final_reproduce then
+		pico8.cart.load_room(pico8.cart.room.x,pico8.cart.room.y)
+	end
 	TAS.show_keys=false
 	TAS.current_frame=0
 	TAS.keypress_frame=1
