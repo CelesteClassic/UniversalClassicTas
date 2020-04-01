@@ -1,3 +1,16 @@
+local fp=require("fixedpoints")
+local function flr(x)
+	if type(x)=="table" then 
+		return x.floor().floating()
+	end
+	return math.floor(x)
+end
+local function ftf(x)
+	if type(x)=="table" then 
+		return x.floating()
+	end 
+	return x 
+end
 local TAS={}
 
 TAS.practice_timing=false
@@ -261,7 +274,7 @@ local function update()
 			TAS.keypress_frame=TAS.keypress_frame+1
 		end
 		
-		if TAS.prev_state.room.x>=0 and 
+		if ftf(TAS.prev_state.room.x)>=0 and 
 		(TAS.prev_state.room.x~=pico8.cart.room.x or TAS.prev_state.room.y~= pico8.cart.room.y) then
 			if not TAS.final_reproduce then
 				if pico8.cart.level_index()<=21 then
@@ -345,7 +358,7 @@ local function draw()
 		end
 	end
 
-	if TAS.showdebug and pico8.cart.level_index()<=30 and not TAS.final_reproduce then
+	if TAS.showdebug and ftf(pico8.cart.level_index())<=30 and not TAS.final_reproduce then
 		--[[pico8.cart.rectfill(pico8.camera_x+1,pico8.camera_y+1,pico8.camera_x+13,pico8.camera_y+7,0)
 		pico8.cart.print(tostring(TAS.practice_time),pico8.camera_x+2,pico8.camera_y+2,7)
 		
@@ -635,6 +648,7 @@ local function keypress(key)
 			TAS.keypress_frame=1
 		end
 	elseif key=='l' then
+		log("hmm")
 		if not TAS.final_reproduce then
 			TAS.advance_frame=true
 			local state, state_flag=get_state()
@@ -769,7 +783,7 @@ local function init()
 		local chest_update=pico8.cart.chest.update 
 		pico8.cart.chest.update=function(this)
 			local _rnd=pico8.cart.rnd
-			if(this.timer-1<=0) then 
+			if(ftf(this.timer-1)<=0) then 
 				pico8.cart.rnd=function() return this.offset+1 end
 			end 
 			chest_update(this)
@@ -779,7 +793,7 @@ local function init()
 	local _draw=pico8.cart._draw
 	pico8.cart._draw=function() 
 		_draw()
-		if pico8.cart.level_index()<30 then
+		if ftf(pico8.cart.level_index())<30 then
 			pico8.cart.draw_time(1,1,7)
 		end
 	end

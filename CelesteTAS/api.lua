@@ -1,5 +1,20 @@
-local flr=math.floor
-
+local fp=require("fixedpoints")
+local function flr(x)
+	if type(x)=="table" then 
+		return x.floor().floating()
+	end
+	return math.floor(x)
+end
+local function ftf(x)
+	if type(x)=="table" then 
+		return x.floating()
+	end 
+	return x 
+end
+local _tonumber=tonumber 
+local function tonumber(s)
+	return _tonumber(ftf(s))
+end
 -- TODO: Remove this
 local scrblitMesh=love.graphics.newMesh(128, "points")
 scrblitMesh:setAttributeEnabled("VertexColor", true)
@@ -24,12 +39,13 @@ local function _plot4points(lines, cx, cy, x, y)
 		_horizontal_line(lines, cx-x, cy-y, cx+x)
 	end
 end
-
 --------------------------------------------------------------------------------
 -- PICO-8 API
 
 local api={}
 
+
+api.fixedpoint=fp
 function api.flip()
 	flip_screen()
 	love.timer.sleep(1/pico8.fps)
@@ -47,6 +63,10 @@ function api.camera(x, y)
 end
 
 function api.clip(x, y, w, h)
+	x=ftf(x)
+	y=ftf(y)
+	h=ftf(h)
+	w=ftf(w)
 	if x and y and w and h then
 		love.graphics.setScissor(x, y, w, h)
 		pico8.clip={x, y, w, h}
@@ -153,7 +173,7 @@ end
 api.printh=print
 
 function api.cursor(x, y)
-	pico8.cursor={x or 0, y or 0}
+	pico8.cursor={ftf(x) or 0, ftf(y) or 0}
 end
 
 function api.tonum(val)
@@ -161,7 +181,7 @@ function api.tonum(val)
 end
 
 function api.tostr(val, hex)
-	local kind=type(val)
+	local kind=type(ftf(val))
 	if kind == "string" then
 		return val
 	elseif kind == "number" then
@@ -183,8 +203,8 @@ end
 function api.spr(n, x, y, w, h, flip_x, flip_y)
 	love.graphics.setShader(pico8.sprite_shader)
 	n=flr(n)
-	w=w or 1
-	h=h or 1
+	w=ftf(w) or 1
+	h=ftf(h) or 1
 	local q
 	if w==1 and h==1 then
 		q=pico8.quads[n]
@@ -212,15 +232,15 @@ function api.spr(n, x, y, w, h, flip_x, flip_y)
 end
 
 function api.sspr(sx, sy, sw, sh, dx, dy, dw, dh, flip_x, flip_y)
-	dw=dw or sw
-	dh=dh or sh
+	dw=ftf(dw) or ftf(sw)
+	dh=ftf(dh) or ftf(sh)
 	-- FIXME: cache this quad
-	local q=love.graphics.newQuad(sx, sy, sw, sh, pico8.spritesheet:getDimensions())
+	local q=love.graphics.newQuad(ftf(sx), ftf(sy), ftf(sw), ftf(sh), pico8.spritesheet:getDimensions())
 	love.graphics.setShader(pico8.sprite_shader)
 	love.graphics.draw(pico8.spritesheet, q,
 		flr(dx)+(flip_x and dw or 0),
 		flr(dy)+(flip_y and dh or 0),
-		0, dw/sw*(flip_x and-1 or 1), dh/sh*(flip_y and-1 or 1))
+		0, dw/ftf(sw)*(flip_x and-1 or 1), dh/ftf(sh)*(flip_y and-1 or 1))
 	love.graphics.setShader(pico8.draw_shader)
 end
 
@@ -416,6 +436,7 @@ function api.map(cel_x, cel_y, sx, sy, cel_w, cel_h, bitmask)
 	sy=flr(sy or 0)
 	cel_w=flr(cel_w or 128)
 	cel_h=flr(cel_h or 64)
+	bitmask=ftf(bitmask)
 	for y=0, cel_h-1 do
 		if cel_y+y<64 and cel_y+y>=0 then
 			for x=0, cel_w-1 do
@@ -438,7 +459,7 @@ function api.mget(x, y)
 	x=flr(x or 0)
 	y=flr(y or 0)
 	if x>=0 and x<128 and y>=0 and y<64 then
-		return pico8.map[y][x]
+		return fixedpoint(pico8.map[y][x])
 	end
 	return 0
 end
@@ -507,6 +528,7 @@ function api.sset(x, y, c)
 end
 
 function api.music(n, fade_len, channel_mask)
+	n=ftf(n)
 	if n==-1 then
 		if pico8.current_music then
 			for i=0, 3 do
@@ -520,6 +542,7 @@ function api.music(n, fade_len, channel_mask)
 		end
 		return
 	end
+	--log(getmetatable(n))
 	if n>63 then
 		n=64
 	elseif n<0 then
@@ -558,7 +581,9 @@ end
 function api.sfx(n, channel, offset)
 	-- n=-1 stop sound on channel
 	-- n=-2 to stop looping on channel
-	channel=channel or -1
+	channel=ftf(channel) or -1
+	n=ftf(n)
+	offset=ftf(offset)
 	if n==-1 then
 		if channel>=0 then pico8.audio_channels[channel].sfx=nil end
 		return
@@ -831,14 +856,25 @@ function api.srand(seed)
 	math.randomseed(flr(seed*0x10000))
 end
 
-api.flr=math.floor
-api.ceil=math.ceil
-
+api.flr=function(x)
+	if type(x)=="table" then 
+		return x.floor()
+	end
+	return math.floor(x)
+end
+api.ceil=function(x)
+	if type(x)=="table" then 
+		return x.ceil()
+	end
+	return math.ceil(x)
+end
 function api.sgn(x)
-	return x<0 and-1 or 1
+	return ftf(x)<0 and-1 or 1
 end
 
-api.abs=math.abs
+api.abs= function(x)
+	return ftf(x)<0 and -x or x 
+end
 
 function api.min(a, b)
 	if a==nil or b==nil then
@@ -863,15 +899,16 @@ function api.mid(x, y, z)
 end
 
 function api.cos(x)
-	return math.cos((x or 0)*math.pi*2)
+	return math.cos((ftf(x) or 0)*math.pi*2)
 end
 
 function api.sin(x)
-	return-math.sin((x or 0)*math.pi*2)
+	return-math.sin((ftf(x) or 0)*math.pi*2)
 end
 
-api.sqrt=math.sqrt
-
+function api.sqrt(x)
+	return math.sqrt(ftf(x))
+end
 function api.atan2(x, y)
 	return (0.75 + math.atan2(x,y) / (math.pi * 2)) % 1.0
 end
@@ -996,7 +1033,7 @@ end
 
 function api.btnp(i, p)
 	if i~=nil or p~=nil then
-		p=p or 0
+		p=ftf(p) or 0
 		if p<0 or p>1 then
 			return false
 		end
@@ -1137,7 +1174,7 @@ function api.count(a)
 	for i=1, #a do
 		if a[i]~=nil then count=count+1 end
 	end
-	return count
+	return fixedpoint(count)
 end
 
 function api.add(a, v)
@@ -1154,5 +1191,4 @@ function api.del(a, dv)
 		end
 	end
 end
-
 return api

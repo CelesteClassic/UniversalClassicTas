@@ -394,6 +394,28 @@ function cart.load_p8(filename)
 	end)
 	-- rewrite assignment operators
 	lua=lua:gsub("(%S+)%s*([%+-%*/%%])=", "%1 = %1 %2 ")
+	-- replace for loops with (mosly) equivilent while loops
+	--lua=lua:gsub("%sfor%s+([%w_]+)%s*=%s*([%w_,%.%(%)%s%/%+%-%*]+)%s*,%s*([%w_,%.%(%)%s%/%+%-%*]+) [%s^\n]-do","local %1=%2-1\nwhile %1+1<=%3 do %1=%1+1\n")
+	lua=lua:gsub("%sfor%s+([%w_]+)%s*=(.-) [%s^\n]-do",function(a,b)
+		local cnt=0
+		local l
+		local r
+		for i=1,#b do 
+			local c=b:sub(i,i)
+			if(c=='(') then 
+				cnt=cnt+1
+			elseif c==')' then
+				cnt=cnt-1
+			elseif c==',' and cnt==0 then 
+				l=b:sub(1,i-1)
+				r=b:sub(i+1,#b)
+				break 
+			end 
+		end 
+		return string.format("local %s=%s-1\nwhile %s+1<=%s do %s=%s+1\n",a,l,a,r,a,a)	
+	end)
+	-- splice fixed point [%w_,().%s%/]
+	lua=lua:gsub("([%s=><_,%(%+%-%*%/]+)(%d+[%.]?%d*)", "%1fixedpoint(%2)")
 	-- convert binary literals to hex literals
 	lua=lua:gsub("([^%w_])0[bB]([01.]+)", function(a, b)
 		local p1, p2=b, ""
@@ -407,7 +429,8 @@ function cart.load_p8(filename)
 			return string.format("%s0x%x.%x", a, p1, p2)
 		end
 	end)
-
+	local f=io.open("patched","w")
+	f:write(lua)
 	local cart_env={}
 	for k, v in pairs(api) do
 		cart_env[k]=v
