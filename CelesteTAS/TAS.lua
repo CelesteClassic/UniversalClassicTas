@@ -16,7 +16,7 @@ TAS.prev_state={room={x=0,y=0},deaths=0}
 TAS.start=false
 TAS.balloon_mode=false
 TAS.balloon_selection=0
-TAS.ballon_count=0
+TAS.balloon_count=0
 TAS.up_time=0
 TAS.down_time=0
 
@@ -25,6 +25,7 @@ TAS.show_keys=false
 TAS.showdebug=true
 
 TAS.balloon_seeds={}
+TAS.cloud_offsets={}
 
 TAS.reproduce=false
 TAS.final_reproduce=false
@@ -149,6 +150,27 @@ local function update_balloon(initial_offset, iterator)
 					o.offset=initial_offset
 				end
 				_iterator=_iterator+1
+			end			
+		end
+	end
+end
+local function update_cloud(initial_offset, iterator)
+	TAS.cloud_offsets[iterator]=initial_offset
+	for i=0,#TAS.states do
+		local _iterator=TAS.balloon_count
+		for _,o in pairs(TAS.states[i]) do
+			if o.type==pico8.cart.platform then 
+				if _iterator==iterator then				
+					--o.offset=o.offset or 0
+					o.rem.x=o.rem.x+((initial_offset-o.offset)*.65)*o.dir
+					o.offset=initial_offset
+					
+					local amount
+					amount = math.floor(o.rem.x + 0.5)
+					o.rem.x =o.rem.x-amount
+					o.x=o.x+amount
+				end
+				_iterator=_iterator+1
 			end
 		end
 	end
@@ -212,6 +234,52 @@ local function update()
 				iterator=iterator+1
 			end
 		end
+		for _,o in pairs(pico8.cart.objects) do
+			if o.type==pico8.cart.platform then
+				if iterator==TAS.balloon_selection then
+					if love.keyboard.isDown("up") then
+						if TAS.up_time==0 then
+							TAS.up_time=1
+							local newoff=(o.offset or 0)+1
+							if newoff==2 then
+								newoff=-1
+							end
+							update_cloud(newoff,iterator)
+							o.rem.x=o.rem.x+((newoff-o.offset)*.65)*o.dir
+							o.offset=newoff
+							
+							local amount
+							amount = math.floor(o.rem.x + 0.5)
+							o.rem.x =o.rem.x-amount
+							o.x=o.x+amount
+						end
+					else
+						if love.keyboard.isDown("down") then
+							if TAS.down_time==0 then
+								TAS.down_time=1
+								local newoff=(o.offset or 0) -1
+								if newoff==-2 then
+									newoff=1
+								end
+								update_cloud(newoff,iterator)
+								o.rem.x=o.rem.x+((newoff-o.offset)*.65)*o.dir
+								o.offset=newoff
+					
+								local amount
+								amount = math.floor(o.rem.x + 0.5)
+								o.rem.x =o.rem.x-amount
+								o.x=o.x+amount
+							end
+						else
+							TAS.down_time=0
+						end
+						TAS.up_time=0
+					end
+				end
+				iterator=iterator+1
+			end 
+		end
+		
 	end
 	
 	local seen_player=false
@@ -343,6 +411,16 @@ local function draw()
 				iterator=iterator+1
 			end
 		end
+		for _,o in pairs(pico8.cart.objects) do
+			if o.type==pico8.cart.platform then
+				if iterator==TAS.balloon_selection then
+					love.graphics.setColor(1,0,1)
+					love.graphics.rectangle("line",o.x,o.y-1,17,9)
+					pico8.cart.print(o.offset or 0,o.x+7,o.y+10,9)
+				end
+				iterator=iterator+1
+			end
+		end
 	end
 
 	if TAS.showdebug and pico8.cart.level_index()<=30 and not TAS.final_reproduce then
@@ -424,7 +502,7 @@ local function ready_level()
 	TAS.show_keys=false
 	TAS.balloon_mode=false
 	TAS.balloon_selection=0
-	TAS.ballon_count=0
+	TAS.balloon_count=0
 	TAS.balloon_seeds={}
 	pico8.cart.freeze=0
 	TAS.keypress_frame=1
@@ -434,6 +512,7 @@ end
 
 function set_seeds()
 	local iterator2=0
+	local clouditer=0
 	for _,o in pairs(pico8.cart.objects) do
 		if o.type==pico8.cart.balloon then
 			o.initial_offset=TAS.balloon_seeds[iterator2]
@@ -442,8 +521,15 @@ function set_seeds()
 		elseif o.type==pico8.cart.chest then
 			o.offset=TAS.balloon_seeds[iterator2]
 			iterator2=iterator2+1
-		--[[elseif o.type==pico8.cart.platform then
-			o.rem.x=o.dir*0.65]]--
+		elseif o.type==pico8.cart.platform and not TAS.final_reproduce then
+			o.offset=TAS.cloud_offsets[TAS.balloon_count+clouditer]
+			o.rem.x=o.dir*0.65*TAS.cloud_offsets[TAS.balloon_count+clouditer]
+			local amount
+			amount = math.floor(o.rem.x + 0.5)
+			o.rem.x = o.rem.x- amount
+			o.x=o.x+amount
+			
+			clouditer=clouditer+1
 		end
 	end
 end
@@ -454,6 +540,7 @@ function load_level(room_x, room_y, reset_seeds)
 	TAS.practice_time=0
 	TAS.practice_timing=false
 	TAS.balloon_count=0
+	TAS.cloud_count=0
 	local i=0
 	for _,o in pairs(pico8.cart.objects) do
 		if o.type==pico8.cart.balloon then
@@ -465,15 +552,23 @@ function load_level(room_x, room_y, reset_seeds)
 				i=i+1
 			end
 		elseif o.type==pico8.cart.chest then
+			TAS.balloon_count=TAS.balloon_count+1
 		    if reset_seeds then
 				TAS.balloon_seeds[i]=0
 				o.offset=0
 				i=i+1
 			end
-		elseif o.type==pico8.cart.platform then
-			o.rem.x=o.dir*0.65
-		--elseif o.type==pico8.cart.big_chest then 
-			--o.state=0
+		end 
+	end 
+	for _,o in pairs(pico8.cart.objects) do
+		if o.type==pico8.cart.platform then
+			TAS.cloud_count=TAS.cloud_count+1
+			if reset_seeds then 
+				TAS.cloud_offsets[i]=0
+				o.offset=0
+				o.rem.x=0
+			end
+			i=i+1
 		end
 	end
 end
@@ -675,7 +770,7 @@ local function keypress(key)
 			if TAS.balloon_mode then
 				TAS.balloon_selection=TAS.balloon_selection-1
 				if TAS.balloon_selection==-1 then
-					TAS.balloon_selection=TAS.balloon_count-1
+					TAS.balloon_selection=TAS.balloon_count+TAS.cloud_count-1
 				end
 			else
 				TAS.keypresses[TAS.keypress_frame][0]=not TAS.keypresses[TAS.keypress_frame][0]
@@ -685,7 +780,7 @@ local function keypress(key)
 		if not TAS.reproduce then
 			if TAS.balloon_mode then
 				TAS.balloon_selection=TAS.balloon_selection+1
-				if TAS.balloon_selection==TAS.balloon_count then
+				if TAS.balloon_selection==TAS.balloon_count+TAS.cloud_count then
 					TAS.balloon_selection=0
 				end
 			else
@@ -800,13 +895,14 @@ local function restart()
 	TAS.keypress_frame=1
 	TAS.balloon_mode=false
 	TAS.balloon_selection=0
-	TAS.ballon_count=0
+	TAS.balloon_count=0
 	TAS.up_time=0
 	TAS.down_time=0
 	TAS.djump=-1
 	TAS.showdebug=true
 	TAS.show_keys=false
 	TAS.balloon_seeds={}
+	TAS.cloud_offsets={}
 	TAS.reproduce=false
 	TAS.final_reproduce=false
 	TAS.start=false
