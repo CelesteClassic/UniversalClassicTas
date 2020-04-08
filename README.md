@@ -30,6 +30,7 @@ To save the TAS press M, which will automatically create a file called 'TAS1.tas
 To open a TAS file, simply drag the file into the window, note that this won't change the current state of the game, so you should always press D after loading a file.
 
 To edit the RNG of the balloons or chests (the balloons initial position is determined by RNG and the x position of the berry coming out of a chest is also determined by RNG) press B, which will toggle RNG manipulation mode (note that you can't toggle it on the first frame of a room being loaded), while in RNG manipulation you can press the right and left arrow keys to change the selected balloon or chest, to change the position of the selected balloon or chest use the up and down arrow keys, you will see a number under the balloon or chest changing, that's the balloon's or chest's seed. When you save a file the RNG seeds will get saved and will also get saved when you press D.
+In RNG manipulation mode you can also offset clouds 1 frame forwards or backwards. Don't use this feature unless you know what you're doing, you don't know what you're doing, don't use this feature.
 
 Press Y to see the current position, rem values (sub-pixels) and speed of the player on the console.
 
