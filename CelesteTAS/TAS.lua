@@ -12,7 +12,7 @@ TAS.states_flags={}
 TAS.current_frame=0
 TAS.keypress_frame=1
 
-TAS.prev_state={room={x=0,y=0},deaths=0}
+TAS.prev_state={room={x=0,y=0},deaths=0,index=1}
 TAS.start=false
 TAS.balloon_mode=false
 TAS.balloon_selection=0
@@ -29,6 +29,8 @@ TAS.cloud_offsets={}
 
 TAS.reproduce=false
 TAS.final_reproduce=false
+TAS.save_reproduce=false
+
 
 --[[local function draw_time(x,y)
 	if pico8.cart.time_ticking or (pico8.cart.level_index()<30 and pico8.cart.time_ticking==nil) then 
@@ -332,6 +334,13 @@ local function update()
 		if TAS.prev_state.room.x>=0 and 
 		(TAS.prev_state.room.x~=pico8.cart.room.x or TAS.prev_state.room.y~= pico8.cart.room.y) then
 			if not TAS.final_reproduce then
+				if TAS.save_reproduce then 
+					TAS.save_reproduce=false
+					TAS.save_file(true,prev_frames+2)
+					log(TAS.keypress_frame)
+					log("Saved compressed file to "..love.filesystem.getRealDirectory(""))
+					TAS.reproduce=false
+				end 
 				if pico8.cart.level_index()<=21 then
 					pico8.cart.max_djump=TAS.djump==-1 and 1 or TAS.djump
 					pico8.cart.new_bg=nil
@@ -380,6 +389,7 @@ local function update()
 	end
 	TAS.prev_state.room ={x=pico8.cart.room.x,y=pico8.cart.room.y}
 	TAS.prev_state.deaths=pico8.cart.deaths
+	TAS.prev_state.index=pico8.cart.level_index()+1
 end
 TAS.update=update
 
@@ -455,8 +465,9 @@ local function draw()
 end
 TAS.draw=draw
 
-local function save_file()
-	local file=love.filesystem.newFile("TAS"..tostring(pico8.cart.level_index()+1)..".tas")
+local function save_file(compress,idx)
+	local file=love.filesystem.newFile("TAS"..tostring(TAS.prev_state.index)..".tas")
+
 	file:open("w")
 	
 	file:write("[")
@@ -464,7 +475,13 @@ local function save_file()
 		file:write(tostring(o)..",")
 	end
 	file:write("]")
-	for _=2,#TAS.keypresses do
+	local finish
+	if(compress) then 
+		finish=idx 
+	else
+		finish=#TAS.keypresses
+	end
+	for _=2,finish do
 		local i=TAS.keypresses[_]
 		local line=0
 		for x=0,5 do
@@ -506,8 +523,9 @@ local function ready_level()
 	TAS.balloon_seeds={}
 	pico8.cart.freeze=0
 	TAS.keypress_frame=1
-	TAS.prev_state={room={x=-1,y=-1},deaths=pico8.cart.deaths}
+	TAS.prev_state={room={x=-1,y=-1},deaths=pico8.cart.deaths,index=-1}
 	TAS.start=false
+	TAS.save_reproduce=false
 end
 
 function set_seeds()
@@ -633,6 +651,7 @@ end
 local function keypress(key)
 	if key=='p' then
 		TAS.reproduce=not TAS.reproduce
+		TAS.save_reproduce=false
 	elseif key=='e' then
 		TAS.showdebug=not TAS.showdebug
 	elseif key=='b' then
@@ -652,6 +671,7 @@ local function keypress(key)
 			pico8.cart.music(0,0,7)
 		end
 		TAS.reproduce=TAS.final_reproduce
+		TAS.save_reproduce=false
 		--TAS.showdebug=not TAS.final_reproduce
 		TAS.balloon_mode=false
 		--pico8.cart.draw_time=TAS.final_reproduce and draw_time or empty
@@ -720,6 +740,7 @@ local function keypress(key)
 	elseif key=='d' then
 		if not TAS.final_reproduce then
 			TAS.reproduce=false
+			TAS.save_reproduce=false
 			reload_level()
 		end
 	elseif key=='r' then
@@ -796,8 +817,15 @@ local function keypress(key)
 			TAS.keypresses[TAS.keypress_frame][5]=not TAS.keypresses[TAS.keypress_frame][5]
 		end
 	elseif key=='m' then
-		TAS.save_file()
+		TAS.save_file(false)
 		log("Saved file to "..love.filesystem.getRealDirectory(""))
+	elseif key=='u' then 
+		if not TAS.final_reproduce then 
+			TAS.save_file(false)
+			log("Saved uncompressed file to "..love.filesystem.getRealDirectory(""))
+			TAS.reproduce=true 
+			TAS.save_reproduce=true
+		end 
 	end
 end
 TAS.keypress=keypress
@@ -905,8 +933,9 @@ local function restart()
 	TAS.cloud_offsets={}
 	TAS.reproduce=false
 	TAS.final_reproduce=false
+	TAS.save_reproduce=false
 	TAS.start=false
-	TAS.prev_state={room={x=0,y=0},deaths=0}
+	TAS.prev_state={room={x=0,y=0},deaths=0,index=1}
 end
 TAS.restart=restart
 
