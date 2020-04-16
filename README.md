@@ -25,7 +25,11 @@ To reload the level and delete your inputs press R.
 
 To hide/unhide the timer and input viewer press E.
 
-To save the TAS press M, which will automatically create a file called 'TAS1.tas' (replacing the 1 with the level number you are on) in the love2d folder (check the [love2d page](https://love2d.org/wiki/love.filesystem) for more information), or check the console message that appears when you save the TAS, which specifies the directory it gets saved to.
+To save a clean version of the TAS press U, which will playback the tas, then automatically create a file called 'TAS1.tas' (replacing the 1 with the level number you are on) in the love2d folder (check the [love2d page](https://love2d.org/wiki/love.filesystem) for more information), or check the console message that appears when you save the TAS, which specifies the directory it gets saved to.
+this can be interrupted at any time by pressing P. 
+Note: a clean version will only be saved if the level can be finished. If it can't (because of an incomplete TAS, etc.) only a raw version will be saved
+
+To save a raw version of the TAS press M, which will save the file in the same place as U, but it won't cut off inputs after the end of the level. it is recommended you use this only for saving WIP TASes
 
 To open a TAS file, simply drag the file into the window, note that this won't change the current state of the game, so you should always press D after loading a file.
 
