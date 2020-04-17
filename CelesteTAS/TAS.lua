@@ -337,7 +337,6 @@ local function update()
 				if TAS.save_reproduce then 
 					TAS.save_reproduce=false
 					TAS.save_file(true,prev_frames+2)
-					log(TAS.keypress_frame)
 					log("Saved compressed file to "..love.filesystem.getRealDirectory(""))
 					TAS.reproduce=false
 				end 
