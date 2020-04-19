@@ -352,6 +352,11 @@ local function update()
 				load_level(TAS.prev_state.room.x, TAS.prev_state.room.y, false)
 				set_seeds()
 			else
+				if TAS.save_reproduce then 
+					TAS.save_file(true,prev_frames+2)
+					log("Saved compressed file to "..love.filesystem.getRealDirectory(""))
+					TAS.reproduce=false
+				end 
 				local numFrames=TAS.current_frame
 				TAS.load_file(love.filesystem.newFile("TAS/TAS"..tostring(pico8.cart.level_index()+1)..".tas"))
 				TAS.reproduce=true
@@ -671,6 +676,26 @@ local function keypress(key)
 		end
 		TAS.reproduce=TAS.final_reproduce
 		TAS.save_reproduce=false
+		--TAS.showdebug=not TAS.final_reproduce
+		TAS.balloon_mode=false
+		--pico8.cart.draw_time=TAS.final_reproduce and draw_time or empty
+		pico8.cart.frames=0
+		pico8.cart.centiseconds=0
+		pico8.cart.seconds=0
+		pico8.cart.minutes=0
+		pico8.cart.deaths=0
+	elseif key=='i' then 
+		TAS.final_reproduce=not TAS.final_reproduce
+		if TAS.final_reproduce then
+			ready_level()
+			pico8.cart.load_room(0,0)
+			TAS.load_file(love.filesystem.newFile("TAS/TAS1.tas"))
+			pico8.cart.max_djump=1
+			pico8.cart.new_bg=nil
+			pico8.cart.music(0,0,7)
+		end
+		TAS.reproduce=TAS.final_reproduce
+		TAS.save_reproduce=TAS.final_reproduce
 		--TAS.showdebug=not TAS.final_reproduce
 		TAS.balloon_mode=false
 		--pico8.cart.draw_time=TAS.final_reproduce and draw_time or empty
