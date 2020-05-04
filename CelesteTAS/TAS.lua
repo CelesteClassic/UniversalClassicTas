@@ -640,7 +640,7 @@ local function load_file(file)
 	set_seeds()
 end
 TAS.load_file=load_file
-local function reload_level()
+local function reload_level(reset_seeds)
 	TAS.practice_timing=false
 	TAS.show_keys=false
 	pico8.cart.will_restart=false
@@ -648,7 +648,7 @@ local function reload_level()
 	TAS.keypress_frame=1
 	TAS.states={}
 	TAS.states_flags={}
-	load_level(pico8.cart.room.x, pico8.cart.room.y, false)
+	load_level(pico8.cart.room.x, pico8.cart.room.y, reset_seeds)
 	pico8.cart.max_djump=TAS.djump==-1 and pico8.cart.max_djump or TAS.djump
 	set_seeds()
 end
@@ -770,9 +770,7 @@ local function keypress(key)
 	elseif key=='r' then
 		if not TAS.final_reproduce then
 			ready_level()
-			pico8.cart.got_fruit[1+pico8.cart.level_index()]=false
-			pico8.cart.load_room(pico8.cart.room.x,pico8.cart.room.y)
-			TAS.keypress_frame=1
+			reload_level(true)
 		end
 	elseif key=='l' then
 		if not TAS.final_reproduce then
