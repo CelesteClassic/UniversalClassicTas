@@ -637,7 +637,7 @@ function api.peek(addr)
 	elseif addr<0x5e00 then
 		return pico8.usermemory[addr-0x4300]
 	elseif addr<0x5f00 then
-		local val=pico8.cartdata[math.floor((addr-0x5e00)/4)]*0x10000
+		local val=(pico8.cartdata[math.floor((addr-0x5e00)/4)] or 0)*0x10000
 		local shift=(addr%4)*8
 		return bit.rshift(bit.band(val, bit.lshift(0xFF, shift)), shift)
 	elseif addr<0x5f80 then
@@ -724,7 +724,7 @@ function api.poke(addr, val)
 		pico8.usermemory[addr-0x4300]=val
 	elseif addr<0x5f00 then
 		local ind=math.floor((addr-0x5e00)/4)
-		local oval=pico8.cartdata[ind]*0x10000
+		local oval=(pico8.cartdata[ind] or 0)*0x10000
 		local shift=(addr%4)*8
 		pico8.cartdata[ind]=bit.bor(bit.band(oval, bit.bnot(bit.lshift(0xFF, shift))), bit.lshift(val, shift))/0x10000
 	elseif addr<0x5f80 then
