@@ -668,7 +668,7 @@ function love.keypressed(key)
 		local filename=cartname..'-'..os.time()..'.png'
 		love.graphics.captureScreenshot(filename)
 		log('saved screenshot to', filename)
-	elseif key=='f3' or key=='f8' then
+	elseif key=='f3' or key=='f8' or (key=='8' and isCtrlOrGuiDown) then
 		-- start recording
 		if gif_recording==nil then
 			local err
@@ -682,7 +682,7 @@ function love.keypressed(key)
 		else
 			log('recording already in progress')
 		end
-	elseif key=='f4' or key=='f9' then
+	elseif key=='f4' or key=='f9' or (key=='9' and isCtrlOrGuiDown) then
 		-- stop recording and save
 		if gif_recording~=nil then
 			gif_recording:close()
