@@ -848,6 +848,10 @@ local function keypress(key)
 			TAS.reproduce=true 
 			TAS.save_reproduce=true
 		end 
+	elseif key=='w' then 
+		if not TAS.final_reproduce then 
+			TAS.load_file(love.filesystem.newFile("TAS/TAS"..(pico8.cart.level_index()+1)..".tas"))
+		end
 	end
 end
 TAS.keypress=keypress
