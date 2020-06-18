@@ -407,7 +407,12 @@ function cart.load_p8(filename)
 			return string.format("%s0x%x.%x", a, p1, p2)
 		end
 	end)
-
+	-- rewrite shorthand ? calls
+	lua=lua:gsub("\n%s-%?(.-)\n","\nprint(%1)\n")
+	
+	--[[local file=io.open("patched.lua","w")
+	file:write(lua)
+	file:close()]]--
 	local cart_env={}
 	for k, v in pairs(api) do
 		cart_env[k]=v
