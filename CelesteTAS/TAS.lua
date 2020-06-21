@@ -605,7 +605,7 @@ local function load_file(file)
 			if h==0 then
 				local i=0
 				for s in x:sub(2):gmatch("([^,]+)") do
-					TAS.balloon_seeds[i]=tostring(s)
+					TAS.balloon_seeds[i]=tonumber(s)
 					i=i+1
 				end
 				h=1
