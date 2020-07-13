@@ -51,11 +51,11 @@ end]]--
 local function empty() 
 end
 
-local function clone(org,dst)
+local function clone(org,dst,seen)
 	for i,o in pairs(org) do
 		if type(o)=="table" and i~="type" then 
 			dst[i]={}
-			clone(o,dst[i])
+			clone(o,dst[i],seen)
 		elseif type(o)~="function" then
 			dst[i]=o  
 		end
