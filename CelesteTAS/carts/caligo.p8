@@ -1339,6 +1339,7 @@ function next_room()
 	if haz_fruit then
 		got_fruit[level_index()+1]=true
 	end
+	haz_fruit=false
  if room.x==2 and room.y==1 then
   music(30,500,7)
  elseif room.x==3 and room.y==1 then
