@@ -183,14 +183,14 @@ player =
       accel=0.4
     end
     
-    if abs(this.spd.x)>1.3 then
+    if abs(flr(10000*this.spd.x+0.5)/10000)>1.3 then
       if this.dash_time==0 then
         this.spd.x=appr(this.spd.x,sign(this.spd.x)*maxrun,deccel)
       end
       if input==-sign(this.spd.x) then
         this.spd.x=appr(this.spd.x,input*maxrun,accel)
       end
-    elseif abs(this.spd.x)>1 then
+    elseif abs(flr(10000*this.spd.x+0.5)/10000)>1 then
       this.spd.x=appr(this.spd.x,sign(this.spd.x)*maxrun,deccel)
     else
       this.spd.x=appr(this.spd.x,input*maxrun,accel)
@@ -516,7 +516,7 @@ maddy = {
       local h_input=sign(this.target.x-this.x)
       local v_input=0
       this.p=get_player()
-      if this.spd.y<0.15 and mrng(1.0)<0.05 then
+      if mrng(1.0)<0.05 then
         dash=true
         if mrng(1.0)<0.75 then
           v_input=mrng(1.0)<0.5 and -1 or 0
