@@ -1077,7 +1077,6 @@ add(types,message)
 big_chest={
   tile=96,
   init=function(this)
-    pause_player=true
     this.state=maddy_intro and 0 or 2
     this.hitbox.w=16
 	if not maddy_spawned then 
@@ -1140,7 +1139,7 @@ capsule_top={
     this.timer=32
   end,
   draw=function(this)
-    if this.state==0 then
+    if this.state==0 and update then
       this.y-=1
       this.timer-=1
       local hit=this.collide(player,0,-1)
@@ -1167,7 +1166,8 @@ capsule_bottom={
   end,
   draw=function(this)
     local p=get_player()
-    if this.state<2 then
+	if not update then 
+    elseif this.state<2 then
       -- rising
       if this.state==0 then
         init_object(smoke,64,88)
@@ -1529,7 +1529,6 @@ function next_room()
  elseif room.x==5 and room.y==3 then
   music(2,500,7)
  end
-
   if room.x==7 then
     load_room(0,room.y+1)
   else
