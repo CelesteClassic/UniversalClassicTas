@@ -762,25 +762,25 @@ local function keypress(key)
 			end
 		end
 	elseif key=='d' then
-		if not TAS.final_reproduce then
+		if not TAS.final_reproduce and not pico8.cart.pause_player then
 			TAS.reproduce=false
 			TAS.save_reproduce=false
 			reload_level()
 		end
 	elseif key=='r' then
-		if not TAS.final_reproduce then
+		if not TAS.final_reproduce and not pico8.cart.pause_player then
 			ready_level()
 			reload_level(true)
 		end
 	elseif key=='l' then
-		if not TAS.final_reproduce then
+		if not TAS.final_reproduce and not pico8.cart.pause_player then
 			TAS.advance_frame=true
 			local state, state_flag=get_state()
 			TAS.states[TAS.current_frame]=state
 			TAS.states_flags[TAS.current_frame]=state_flag
 		end
 	elseif key=='k' then
-		if not TAS.final_reproduce then
+		if not TAS.final_reproduce and not pico8.cart.pause_player then
 			if TAS.current_frame>0 then
 				TAS.current_frame=TAS.current_frame-1
 				if TAS.show_keys then
@@ -791,11 +791,15 @@ local function keypress(key)
 			end
 		end
 	elseif key=='1' or key=='2' or key=='3' or key=='0' then 
-		TAS.djump=tonumber(key)
-		reload_level()
+		if not TAS.final_reproduce and not pico8.cart.pause_player then 
+			TAS.djump=tonumber(key)
+			reload_level()
+		end
 	elseif key=='-' then 
-		TAS.djump=-1
-		reload_level()
+		if not TAS.final_reproduce and not pico8.cart.pause_player then 
+			TAS.djump=-1
+			reload_level()
+		end
 	elseif key=='up' then
 		if not TAS.reproduce then
 			if not TAS.balloon_mode then
