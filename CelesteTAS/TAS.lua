@@ -773,14 +773,14 @@ local function keypress(key)
 			reload_level(true)
 		end
 	elseif key=='l' then
-		if not TAS.final_reproduce and not pico8.cart.pause_player then
+		if not TAS.final_reproduce then
 			TAS.advance_frame=true
 			local state, state_flag=get_state()
 			TAS.states[TAS.current_frame]=state
 			TAS.states_flags[TAS.current_frame]=state_flag
 		end
 	elseif key=='k' then
-		if not TAS.final_reproduce and not pico8.cart.pause_player then
+		if not TAS.final_reproduce then
 			if TAS.current_frame>0 then
 				TAS.current_frame=TAS.current_frame-1
 				if TAS.show_keys then
