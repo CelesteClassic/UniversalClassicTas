@@ -417,9 +417,9 @@ function cart.load_p8(filename)
 	lua=lua:gsub("🅾️","4")
 	lua=lua:gsub("❎","5")
 	
-	local file=io.open("patched.lua","w")
+	--[[local file=io.open("patched.lua","w")
 	file:write(lua)
-	file:close()
+	file:close()]]--
 	local cart_env={}
 	for k, v in pairs(api) do
 		cart_env[k]=v
