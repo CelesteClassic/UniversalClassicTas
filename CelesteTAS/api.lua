@@ -1100,6 +1100,22 @@ end
 function api.menuitem()
 end
 
+function api.split(str, sep, conv_nums)
+	if str==nil then
+		return nil 
+	end
+	sep=sep or ","
+	conv_nums=(conv_nums==nil) and true or conv_nums
+	local tbl={}
+	for val in string.gmatch(str, '([^'..sep..']+)') do
+		if conv_nums  and tonumber(val) ~= nil then 
+			val=tonumber(val)
+		end 
+		table.insert(tbl,val)
+	end
+	return tbl
+end
+
 api.sub=string.sub
 api.pairs=pairs
 api.type=type
