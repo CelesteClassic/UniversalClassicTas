@@ -137,6 +137,7 @@ TAS.set_state=set_state
 
 local function update_balloon(initial_offset, iterator)
 	TAS.balloon_seeds[iterator]=initial_offset
+	if next(TAS.states)==nil then return end
 	for i=0,#TAS.states do
 		local _iterator=0
 		for _,o in pairs(TAS.states[i]) do
@@ -158,12 +159,13 @@ local function update_balloon(initial_offset, iterator)
 end
 local function update_cloud(initial_offset, iterator)
 	TAS.cloud_offsets[iterator]=initial_offset
+	if next(TAS.states)==nil then return end
 	for i=0,#TAS.states do
 		local _iterator=TAS.balloon_count
 		for _,o in pairs(TAS.states[i]) do
 			if o.type==pico8.cart.platform then 
 				if _iterator==iterator then				
-					--o.offset=o.offset or 0
+					o.offset=o.offset or 0
 					o.rem.x=o.rem.x+((initial_offset-o.offset)*.65)*o.dir
 					o.offset=initial_offset
 					
@@ -627,6 +629,8 @@ local function load_file(file)
 		end
 	end
 	TAS.reproduce=false
+	TAS.save_reproduce=false
+	TAS.advance_frame=false
 	TAS.practice_timing=false
 	pico8.cart.got_fruit[1+pico8.cart.level_index()]=false
 	if not TAS.final_reproduce then
