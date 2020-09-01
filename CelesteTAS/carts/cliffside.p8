@@ -904,7 +904,9 @@ flag={
     this.x+=5
     this.score=0
     for k,v in pairs(got_fruit) do
-      this.score+=1
+		if v then  
+			this.score+=1
+		end
     end
   end,
   draw=function(this)
