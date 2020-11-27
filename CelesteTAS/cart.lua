@@ -134,7 +134,6 @@ end
 	
  
 local cart={}
-
 function cart.load_p8(filename)
 	local lua=""
 	pico8.quads={}
@@ -481,7 +480,10 @@ function cart.load_p8(filename)
 		end
 	end)
 	-- rewrite assignment operators
-	lua=lua:gsub("(%S+)%s*([%+-%*/%%\\])=", "%1 = %1 %2 ")
+	-- TODO: rewrite this probably with a normal pattern matching library
+	
+	lua=lua:gsub("(%S+)%s*([%+%-%*/%%\\])=([^\n]-)(%-%-.-\n)", "%1 = %1 %2 (%3) %4")
+	lua=lua:gsub("(%S+)%s*([%+%-%*/%%\\])=([^\n]-)\n", "%1 = %1 %2 (%3)\n")
 	-- convert binary literals to hex literals
 	lua=lua:gsub("([^%w_])0[bB]([01.]+)", function(a, b)
 		local p1, p2=b, ""
@@ -510,13 +512,13 @@ function cart.load_p8(filename)
 		if lua:sub(i,i)=="\\" then 
 			local l=searchBackwards(lua,i)
 			local r=searchForwards(lua,i)
-			lua=lua:sub(1,l).."math.floor("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
+			lua=lua:sub(1,l).."flr("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
 		end 
 	end
 	
 	--[[local file=io.open("patched.lua","w")
 	file:write(lua)
-	file:close()]]--
+	file:close()]]
 	local cart_env={}
 	for k, v in pairs(api) do
 		cart_env[k]=v
