@@ -45,6 +45,94 @@ local function decompress(code)
 	return lua
 end
 
+--helper functions for patching \
+local function nxt(str,i)
+	repeat 
+		i=i+1
+	until not str:sub(i,i):match("%s")
+	return i
+end
+local function prv(str,i)
+	repeat 
+		i=i-1
+	until not str:sub(i,i):match("%s")
+	return i
+end
+local function checkUnary(str,i) 
+	local unary_ops={["~"]=true,["#"]=true,["-"]=true}
+	if not unary_ops[str:sub(i,i)] then return false end 
+	local reserved=
+	{
+	["elseif"]=true,
+	["if"]=true,
+	["while"]=true,
+	["return"]=true
+	}
+	i=prv(str,i)
+	local s=""
+	while str:sub(i,i):match("%w") do 
+		s=str:sub(i,i)..s
+		i=i-1
+	end 
+	if s=="" then 
+		return str:sub(i,i)~=")"
+	else 
+		return not reserved[s] 
+	end 
+end
+local function searchForwards(str,i)
+	i=nxt(str,i)
+	while str:sub(i,i):match("%w") do 
+		i=i+1
+	end 
+	i=nxt(str,i-1)
+	if(str:sub(i,i)=="(") then 
+		local pcount=0
+		repeat 
+			local c=str:sub(i,i)
+			if c=="(" then 
+				pcount=pcount+1
+			elseif c==")" then 
+				pcount=pcount-1
+			end 
+			i=nxt(str,i)
+		until pcount==0 or i>#str
+	end
+	if str:sub(i,i)=="^" or checkUnary(str,i) then 
+		return searchForwards(str,i)
+	else 
+		return prv(str,i)+1
+	end 
+end
+local function searchBackwards(str,i)
+	i=prv(str,i)
+	while str:sub(i,i):match("%w") do 
+		i=i-1
+	end 
+	i=prv(str,i+1)
+	if(str:sub(i,i)==")") then 
+		local pcount=0
+		repeat 
+			local c=str:sub(i,i)
+			if c==")" then 
+				pcount=pcount+1
+			elseif c=="(" then 
+				pcount=pcount-1
+			end 
+			i=prv(str,i)
+		until pcount==0 or i<=0
+	end
+	local c=str:sub(i,i)
+	if c=="^" or c=="*" or c=="/" or c=="%" or checkUnary(str,i) then 
+		return searchBackwards(str,i)
+	else 
+		return nxt(str,i)-1
+	end 
+end
+
+
+	
+ 
 local cart={}
 
 function cart.load_p8(filename)
@@ -393,7 +481,7 @@ function cart.load_p8(filename)
 		end
 	end)
 	-- rewrite assignment operators
-	lua=lua:gsub("(%S+)%s*([%+-%*/%%])=", "%1 = %1 %2 ")
+	lua=lua:gsub("(%S+)%s*([%+-%*/%%\\])=", "%1 = %1 %2 ")
 	-- convert binary literals to hex literals
 	lua=lua:gsub("([^%w_])0[bB]([01.]+)", function(a, b)
 		local p1, p2=b, ""
@@ -416,6 +504,15 @@ function cart.load_p8(filename)
 	lua=lua:gsub("⬇️","3")
 	lua=lua:gsub("🅾️","4")
 	lua=lua:gsub("❎","5")
+	
+	--patch \
+	for i=1,#lua do 
+		if lua:sub(i,i)=="\\" then 
+			local l=searchBackwards(lua,i)
+			local r=searchForwards(lua,i)
+			lua=lua:sub(1,l).."math.floor("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
+		end 
+	end
 	
 	--[[local file=io.open("patched.lua","w")
 	file:write(lua)
