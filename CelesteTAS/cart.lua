@@ -70,7 +70,7 @@ local function checkUnary(str,i)
 	}
 	i=prv(str,i)
 	local s=""
-	while str:sub(i,i):match("%w") do 
+	while str:sub(i,i):match("[%w_]") do 
 		s=str:sub(i,i)..s
 		i=i-1
 	end 
@@ -82,7 +82,7 @@ local function checkUnary(str,i)
 end
 local function searchForwards(str,i)
 	i=nxt(str,i)
-	while str:sub(i,i):match("%w") do 
+	while str:sub(i,i):match("[%w_]") do 
 		i=i+1
 	end 
 	i=nxt(str,i-1)
@@ -106,7 +106,7 @@ local function searchForwards(str,i)
 end
 local function searchBackwards(str,i)
 	i=prv(str,i)
-	while str:sub(i,i):match("%w") do 
+	while str:sub(i,i):match("[%w_]") do 
 		i=i-1
 	end 
 	i=prv(str,i+1)
