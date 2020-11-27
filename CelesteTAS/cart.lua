@@ -134,7 +134,7 @@ end
 	
  
 local cart={}
-function cart.load_p8(filename)
+function cart.load_p8(filename,DEBUG)
 	local lua=""
 	pico8.quads={}
 	pico8.spritesheet_data=love.image.newImageData(128, 128)
@@ -516,9 +516,11 @@ function cart.load_p8(filename)
 		end 
 	end
 	
-	--[[local file=io.open("patched.lua","w")
-	file:write(lua)
-	file:close()]]
+	if DEBUG then 
+		local file=io.open("patched.lua","w")
+		file:write(lua)
+		file:close()
+	end
 	local cart_env={}
 	for k, v in pairs(api) do
 		cart_env[k]=v

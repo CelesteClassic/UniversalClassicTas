@@ -84,7 +84,7 @@ local retro_mode=false
 local paused=false
 local mobile=false
 local api, cart, gif
-
+local DEBUG
 local __buffer_count=8
 local __buffer_size=1024
 local __sample_rate=22050
@@ -139,7 +139,7 @@ function _load(filename)
 	love.graphics.setCanvas(pico8.screen)
 	love.graphics.setShader(pico8.draw_shader)
 
-	pico8.cart=cart.load_p8(filename)
+	pico8.cart=cart.load_p8(filename,DEBUG)
 	for i=0, 0x1c00-1 do
 		pico8.usermemory[i]=0
 	end
@@ -346,7 +346,12 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 	api=require("api")
 	cart=require("cart")
 	gif=require("gif")
-
+	
+	for _,arg in ipairs(love_args) do 
+		if arg=="-debug" then 
+			DEBUG=true 
+		end 
+	end
 	-- load the cart
 	love.filesystem.createDirectory("carts")
 	_load(love_args[1]~=nil and 'carts/'..love_args[1] or 'carts/celeste.p8')
