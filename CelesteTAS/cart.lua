@@ -480,10 +480,7 @@ function cart.load_p8(filename,DEBUG)
 		end
 	end)
 	-- rewrite assignment operators
-	-- TODO: rewrite this probably with a normal pattern matching library
-	
-	lua=lua:gsub("(%S+)%s*([%+%-%*/%%\\])=([^\n]-)(%-%-.-\n)", "%1 = %1 %2 (%3) %4")
-	lua=lua:gsub("(%S+)%s*([%+%-%*/%%\\])=([^\n]-)\n", "%1 = %1 %2 (%3)\n")
+	lua=lua:gsub("(%S+)%s*([%+-%*/%%\\])=", "%1 = %1 %2 ")
 	-- convert binary literals to hex literals
 	lua=lua:gsub("([^%w_])0[bB]([01.]+)", function(a, b)
 		local p1, p2=b, ""
@@ -512,7 +509,7 @@ function cart.load_p8(filename,DEBUG)
 		if lua:sub(i,i)=="\\" then 
 			local l=searchBackwards(lua,i)
 			local r=searchForwards(lua,i)
-			lua=lua:sub(1,l).."flr("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
+			lua=lua:sub(1,l).."math.floor("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
 		end 
 	end
 	
