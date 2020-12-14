@@ -509,7 +509,7 @@ function cart.load_p8(filename,DEBUG)
 		if lua:sub(i,i)=="\\" then 
 			local l=searchBackwards(lua,i)
 			local r=searchForwards(lua,i)
-			lua=lua:sub(1,l).."math.floor("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
+			lua=lua:sub(1,l).."flr("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
 		end 
 	end
 	
