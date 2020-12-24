@@ -460,9 +460,10 @@ function cart.load_p8(filename,DEBUG)
 			end
 		end
 	end
-
+	
 	-- patch the lua
 	lua=lua:gsub("!=", "~=").."\n"
+	
 	-- rewrite shorthand if statements eg. if (not b) i=1 j=2
 	lua=lua:gsub("if%s*(%b())%s*([^\n]*)\n", function(a, b)
 		local nl=a:find('\n', nil, true)
@@ -479,8 +480,10 @@ function cart.load_p8(filename,DEBUG)
 			end
 		end
 	end)
+	
 	-- rewrite assignment operators
-	lua=lua:gsub("(%S+)%s*([%+-%*/%%\\])=", "%1 = %1 %2 ")
+	lua=lua:gsub("(%W)(%S+)%s*([%+-%*/%%\\])=", "%1%2 = %2 %3 ")
+	
 	-- convert binary literals to hex literals
 	lua=lua:gsub("([^%w_])0[bB]([01.]+)", function(a, b)
 		local p1, p2=b, ""
@@ -494,8 +497,10 @@ function cart.load_p8(filename,DEBUG)
 			return string.format("%s0x%x.%x", a, p1, p2)
 		end
 	end)
+	
 	-- rewrite shorthand ? calls
 	lua=lua:gsub("\n%s-%?([^\n]*)","\nprint(%1)")
+	
 	--replace btn symbols with numbers
 	lua=lua:gsub("⬅️","0")
 	lua=lua:gsub("➡️","1")
@@ -512,7 +517,6 @@ function cart.load_p8(filename,DEBUG)
 			lua=lua:sub(1,l).."flr("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
 		end 
 	end
-	
 	if DEBUG then 
 		local file=io.open("patched.lua","w")
 		file:write(lua)
