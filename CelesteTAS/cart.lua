@@ -482,8 +482,27 @@ function cart.load_p8(filename,DEBUG)
 	end)
 	
 	-- rewrite assignment operators
-	lua=lua:gsub("(%W)(%S+)%s*([%+-%*/%%\\])=", "%1%2 = %2 %3 ")
-	
+	local l=1
+	while l<#lua do
+		if(lua:match("^(%W)(%S+)%s*([%+-%*/%%\\])=(.+)",l)) then 
+			lua=lua:sub(1,l-1)..lua:sub(l):gsub("^(%W)(%S+)%s*([%+-%*/%%\\])=(.+)", 
+				function(prev,var,op,rest)
+					local MAXLINE=100 -- max length of a statement involving a += style operator in the pico8 code
+					local test=string.format("%s = %s %s (",var,var,op=='\\' and '/' or op)
+					local mx=0
+					local modrest=rest:sub(1,MAXLINE):gsub('\\','/')
+					for i=1,#modrest do 
+						test=test..modrest:sub(i,i)
+						if not modrest:sub(i,i):match("%s") and load(test..")") then 
+							mx=i 
+						end 
+					end 
+					return string.format("%s%s = %s %s (%s)%s",prev,var,var,op,rest:sub(1,mx),rest:sub(mx+1))
+				end 
+			,1)
+		end
+		l=l+1
+	end
 	-- convert binary literals to hex literals
 	lua=lua:gsub("([^%w_])0[bB]([01.]+)", function(a, b)
 		local p1, p2=b, ""
