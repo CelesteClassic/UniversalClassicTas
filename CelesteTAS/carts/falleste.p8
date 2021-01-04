@@ -1057,6 +1057,7 @@ flag={
       sfx(55)
       sfx_timer,this.show,time_ticking=30,true,false
       this.expanding=true
+	  lvl_id+=1
     end
     if this.expand>200 then
       this.expanding=false
