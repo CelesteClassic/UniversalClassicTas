@@ -46,6 +46,7 @@ function begin_game()
   max_djump,deaths,frames,seconds,minutes,music_timer,time_ticking=0,0,0,0,0,0,true
   music(0,0,7)
   load_level(0)
+  max_djump=0
 end
 
 function is_title()
@@ -1318,6 +1319,9 @@ function _update()
       end
     end
   end
+  if lvl_id==0 then 
+	max_djump=0
+  end 
   
   if sfx_timer>0 then
     sfx_timer-=1
