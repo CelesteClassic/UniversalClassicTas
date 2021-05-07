@@ -416,53 +416,23 @@ spring={
   end
 }
 
-double={
-  init=function(this) 
-    this.offset=rnd(1)
-    this.start=this.y
-    this.timer=0
-    this.hitbox=rectangle(-1,-1,10,10)
-  end,
-  update=function(this) 
-    if this.spr==21 then
-      this.offset+=0.01
-      this.y=this.start+sin(this.offset)*2
-      local hit=this.player_here()
-      if hit and hit.djump<2 then
-        max_djump=2
-        psfx(6)
-        this.init_smoke()
-        hit.djump=max_djump
-        this.spr=0
-        this.timer=60
-        max_djump=1
-      end
-    elseif this.timer>0 then
-      this.timer-=1
-    else 
-      psfx(7)
-      this.init_smoke()
-      this.spr=21 
-    end
-  end
-}
-
 balloon={
   init=function(this) 
     this.offset=rnd(1)
     this.start=this.y
     this.timer=0
     this.hitbox=rectangle(-1,-1,10,10)
+	this.base_spr=this.spr
   end,
   update=function(this) 
-    if this.spr==22 then
+    if this.spr==this.base_spr then
       this.offset+=0.01
       this.y=this.start+sin(this.offset)*2
       local hit=this.player_here()
-      if hit and hit.djump<max_djump then
+      if hit and (this.spr==22 and hit.djump<max_djump or this.spr==21 and hit.djump<2) then
         psfx(6)
         this.init_smoke()
-        hit.djump=max_djump
+        hit.djump=this.spr==22 and max_djump or 2
         this.spr=0
         this.timer=60
       end
@@ -471,7 +441,7 @@ balloon={
     else 
       psfx(7)
       this.init_smoke()
-      this.spr=22 
+      this.spr=this.base_spr 
     end
   end
 }
@@ -837,7 +807,7 @@ tiles={
   [13]=jumpthrough,
   [18]=spring,
   [20]=chest,
-  [21]=double,
+  [21]=balloon,
   [22]=balloon,
   [23]=fall_floor,
   [26]=fruit,
@@ -1285,6 +1255,7 @@ function _draw()
    pal(2,2,1) 
    pal(4,14,1)
   end
+  pal()
 end
 
  
