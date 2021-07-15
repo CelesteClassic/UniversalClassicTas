@@ -1183,4 +1183,10 @@ function api.del(a, dv)
 	end
 end
 
+function api.unpack (t, i)
+	i = i or 1
+	if t[i] ~= nil then
+		return t[i], unpack(t, i + 1)
+	end
+end
 return api
