@@ -60,7 +60,7 @@ local function prv(str,i)
 end
 local function checkUnary(str,i) 
 	local unary_ops={["~"]=true,["#"]=true,["-"]=true}
-	if not unary_ops[str:sub(i,i)] then return false end 
+	if not unary_ops[str:sub(i,i)] or str:sub(i,i+1)=="~=" then return false end 
 	local reserved=
 	{
 	["elseif"]=true,
@@ -529,12 +529,14 @@ function cart.load_p8(filename,DEBUG)
 	lua=lua:gsub("❎","5")
 	
 	--patch \
-	for i=1,#lua do 
+	local i=1
+	while i<=#lua do --no for loop because change in place
 		if lua:sub(i,i)=="\\" then 
 			local l=searchBackwards(lua,i)
 			local r=searchForwards(lua,i)
 			lua=lua:sub(1,l).."flr("..lua:sub(l+1,i-1).."/"..lua:sub(i+1,r-1)..")"..lua:sub(r)
 		end 
+		i=i+1
 	end
 	if DEBUG then 
 		local file=io.open("patched.lua","w")

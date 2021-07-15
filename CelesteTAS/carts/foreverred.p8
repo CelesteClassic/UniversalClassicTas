@@ -1526,12 +1526,12 @@ end
 local cache,cache_bits=0,0
 function getval(bits)
 if cache_bits<16 then
-cache+=%src>>>16-cache_bits
+cache+=lshr(peek2(src),16-cache_bits)
 cache_bits+=16
 src+=2
 end
-local val=cache<<32-bits>>>16-bits
-cache=cache>>>bits
+local val=lshr(shl(cache,(32-bits)),16-bits)
+cache=lshr(cache,bits)
 cache_bits-=bits
 return val
 end
@@ -1541,7 +1541,7 @@ repeat
 bits+=1
 local vv=getval(bits)
 n+=vv
-until vv<(1<<bits)-1
+until vv<(shl(1,bits))-1
 return n
 end
 local
@@ -1571,11 +1571,11 @@ local v=l[predict and 1 or gnp"2" ]
 vlist_val(l, v)
 vlist_val(el, v)
 vset(x,y,v)
-x+=1
-y+=x\w
-x%=w
-end
-end
+            x+=1
+            y+=x\w
+            x%=w
+        end
+    end
 end
 __gfx__
 00777700000000000000000001111110000000000000000000000000000000000077777000077700000070000000000000000000000060000000600000060000
