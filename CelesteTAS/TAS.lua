@@ -439,7 +439,7 @@ local function draw()
 		end
 	end
 
-	if TAS.showdebug and pico8.cart.level_index()<=30 and not TAS.final_reproduce then
+	if TAS.showdebug and pico8.cart.level_index()<=(pico8.cart.max_index or 30) and not TAS.final_reproduce then
 		--[[pico8.cart.rectfill(pico8.camera_x+1,pico8.camera_y+1,pico8.camera_x+13,pico8.camera_y+7,0)
 		pico8.cart.print(tostring(TAS.practice_time),pico8.camera_x+2,pico8.camera_y+2,7)
 		
@@ -722,7 +722,7 @@ local function keypress(key)
 		if not TAS.final_reproduce then
 			if not pico8.cart.pause_player then
 				ready_level()
-				if pico8.cart.level_index()<30 then
+				if pico8.cart.level_index()<(pico8.cart.max_index or 30) then
 					local newx=pico8.cart.room.x
 					local newy=pico8.cart.room.y
 					if pico8.cart.room.x==7 then
@@ -901,7 +901,7 @@ local function init()
 		local draw_time=pico8.cart.draw_time
 		pico8.cart.draw_time=function(...)
 			local arg={...}
-			if (TAS.showdebug and TAS.final_reproduce) or pico8.cart.level_index()==30 then 
+			if (TAS.showdebug and TAS.final_reproduce) or pico8.cart.level_index()==(pico8.cart.max_index or 30) then 
 				if arg[1]~=4 or arg[2]~=4 then 
 					draw_time(...)
 				end
@@ -936,7 +936,7 @@ local function init()
 	local _draw=pico8.cart._draw
 	pico8.cart._draw=function() 
 		_draw()
-		if pico8.cart.level_index()<30 then
+		if pico8.cart.level_index()<(pico8.cart.max_index or 30) then
 			pico8.cart.draw_time(1,1,7)
 		end
 	end
