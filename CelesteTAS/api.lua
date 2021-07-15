@@ -406,6 +406,14 @@ function api.palt(c, t)
 	pico8.sprite_shader:send('transparent', shdr_unpack(pico8.pal_transparent))
 end
 
+function api.oval(x0, y0, x1, y1, col) 
+	--TODO: implement this
+end 
+function api.ovalfill(x0, y0, x1, y1, col)
+	--TODO: implement this
+end 
+
+
 function api.fillp(p)
 	-- TODO: oh jeez
 end
