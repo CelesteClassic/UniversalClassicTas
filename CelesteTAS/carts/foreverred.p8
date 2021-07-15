@@ -1,6 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 29
 __lua__
+
+max_index=41
 function vec(x,y)
 return bt({x,y},"x,y")
 end
@@ -950,6 +952,7 @@ target_ph=lvl_ph
 fg_col,fg_alt,bg_col,bg_alt,bgm,area=unpack(split(themes[b[5]+2]))
 bgm=b[7]~=0 and b[7] or bgm
 if not is_title() and not is_credits() then
+load_override=lvl_id<=20 and m1 or lvl_id<=24 and m2 or lvl_id<=26 and m3 or lvl_id<28 and m1 or m3
 if load_override then
 load_mapdata(load_override)
 load_override=nil
@@ -960,8 +963,8 @@ if mapdata[lvl_id] then
 local l=1
 for i=0,b[3]-1 do
 for j=0,b[4]-1 do
-replace_room(lvl_x+i,lvl_y+j,sub(mapdata[lvl_id],l,l+256))
-l+=256
+replace_room(lvl_x+i,lvl_y+j,sub(mapdata[lvl_id],l,l+512))
+l+=512
 end
 end
 end
@@ -1371,7 +1374,7 @@ end
 function replace_room(x,y,room)
 local offset=y<2 and 8192 or 0
 for y_=0,15 do
-load_data(sub(room,16*y_+1,16*y_+17),offset+x*16+y*2048+y_*128)
+load_data(sub(room,32*y_+1,32*y_+33),offset+x*16+y*2048+y_*128)
 end
 end
 function load_mapdata(mapdata)
