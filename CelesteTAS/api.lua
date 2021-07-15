@@ -750,6 +750,18 @@ function api.poke(addr, val)
 	end
 end
 
+function api.peek2(addr)
+	local val = 0
+	val = val + api.peek(addr)
+	val = val + api.peek(addr+1)*0x100
+	return val
+end
+
+function api.poke2(addr, val)
+	api.poke(addr+0, bit.rshift(bit.band(val, 0x0000FF),  0))
+	api.poke(addr+1, bit.rshift(bit.band(val, 0x00FF00),  8))
+end
+
 function api.peek4(addr)
 	local val = 0
 	val = val + api.peek(addr+0)/0x10000
