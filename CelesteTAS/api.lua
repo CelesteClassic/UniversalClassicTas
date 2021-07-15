@@ -189,7 +189,9 @@ function api.spr(n, x, y, w, h, flip_x, flip_y)
 	if w==1 and h==1 then
 		q=pico8.quads[n]
 		if not q then
-			log('warning: sprite '..n..' is missing')
+			if(n~=-1) then --spr -1 is no op
+				log('warning: sprite '..n..' is missing')
+			end 
 			return
 		end
 	else
