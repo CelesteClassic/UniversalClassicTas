@@ -182,7 +182,7 @@ end
 
 function api.spr(n, x, y, w, h, flip_x, flip_y)
 	love.graphics.setShader(pico8.sprite_shader)
-	n=flr(n)
+	n=flr(n or 0)
 	w=w or 1
 	h=h or 1
 	local q
@@ -465,6 +465,9 @@ end
 function api.fget(n, f)
 	if n==nil then return nil end
 	if f~=nil then
+		if type(f)~="number" then 
+			f=0
+		end 
 		-- return just that bit as a boolean
 		if not pico8.spriteflags[flr(n)] then
 			warning(string.format('fget(%d, %d)', n, f))
@@ -863,19 +866,15 @@ end
 api.abs=math.abs
 
 function api.min(a, b)
-	if a==nil or b==nil then
-		warning('min a or b are nil returning 0')
-		return 0
-	end
+	a=a or 0
+	b=b or 0
 	if a<b then return a end
 	return b
 end
 
 function api.max(a, b)
-	if a==nil or b==nil then
-		warning('max a or b are nil returning 0')
-		return 0
-	end
+	a=a or 0
+	b=b or 0
 	if a>b then return a end
 	return b
 end
