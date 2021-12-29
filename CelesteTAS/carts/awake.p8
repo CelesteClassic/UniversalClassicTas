@@ -177,7 +177,7 @@ player={
       if not on_ground then
         this.spd.y=appr(this.spd.y,maxfall,abs(this.spd.y)>0.15 and 0.21 or 0.105)
       end
-      
+
       local has_jumped=false
       if this.jbuffer>0 then
         if this.grace>0 then
@@ -333,10 +333,10 @@ player_spawn={
     end
   end,
   update=function(this)
-    if this.tent then 
+    if this.tent then
         tent.update(this)
-        return 
-    end 
+        return
+    end
     if this.state==0 then
       if this.y<this.target+16 then
         this.state=1
@@ -366,10 +366,10 @@ player_spawn={
     move_camera(this)
   end,
   draw=function(this)
-    if this.tent then 
+    if this.tent then
       tent.draw(this)
-      return 
-    end 
+      return
+    end
     set_hair_color(max_djump)
     draw_hair(this,1)
     draw_obj_sprite(this)
@@ -462,7 +462,7 @@ balloon={
     this.balloon=true
   end,
   update=function(this)
-    if this.balloon then 
+    if this.balloon then
       if this.spr==22 then
         this.offset+=0.01
         this.y=this.start+sin(this.offset)*2
@@ -481,10 +481,10 @@ balloon={
         this.init_smoke()
         this.spr=22
       end
-    else 
+    else
       jump_gem.update(this)
-    end 
-  end 
+    end
+  end
 }
 
 function break_fall_floor(obj)
@@ -646,10 +646,11 @@ tent={
     end
   end,
   update=function(this)
+    max_djump=0
       this.delay-=1
-      if this.delay==-1 then 
+      if this.delay==-1 then
         this.type=tent
-      end 
+      end
     if this.p and this.ptimer==0 then
       this.px+=0.2
     end
@@ -690,7 +691,7 @@ tent={
 waterfall={
   init=function(this)
     this.t=0
-    while (not this.is_solid(0,8) and this.y+this.hitbox.h<lvl_ph) do this.hitbox.h+=8 end 
+    while (not this.is_solid(0,8) and this.y+this.hitbox.h<lvl_ph) do this.hitbox.h+=8 end
     this.d=(this.spr==99 and 24 or 32)
     this.offscrn=this.y+this.hitbox.h>lvl_ph-6
   end,
@@ -746,7 +747,7 @@ taco={
       rectfill(4+camx,106,124+camx,122,0)
       rect(4+camx,106,124+camx,122,7)
       ?"this shrine is for taco, who",8+camx,108,7
-      ?"is a huge inspiration to me.",8+camx,116,7      
+      ?"is a huge inspiration to me.",8+camx,116,7
     end
   end
 }
@@ -1729,12 +1730,12 @@ end
 room=vector(0,0)
 local __update=_update
 
-_update=function() 
+_update=function()
   __update()
   room=vector((lvl_id-1)%8,flr((lvl_id-1)/8))
 end
 function level_index()
-  return lvl_id-1 
+  return lvl_id-1
 end
 __gfx__
 00000000000000000000000008888880000000000000000000000000000000000700007000700700000770000000000000000000aaaaaaaaaaaaaaaaaaaaaaaa
